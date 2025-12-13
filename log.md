@@ -65,4 +65,71 @@ while True:
 from __builtins__ import *
 plant(Entities.Bush)
 ```
-其中Entities翻译是实体方块,Bush是丛,解释成灌木丛
+其中Entities翻译是实体方块,Bush是丛,解释成灌木丛,覆盖原有植物
+
+## 1.4v
+初始版本代码
+
+```python
+# 1.4v
+## 说明
+# 种植灌木并收获灌木
+
+from __builtins__ import *
+
+# plant Bush
+
+flag = 0
+while True:
+
+    flag += 1
+    move(North)
+    plant(Entities.Bush)
+
+    if flag >= 3:
+        break
+
+# harvest wood
+
+while True:
+    move(North)
+    if can_harvest():
+        harvest()
+```
+但是因为未解锁变量,不可使用,切版本
+
+思路为先种植再收获,代码分开,新建一个代码文件
+
+### 种植
+```python
+# plant Bush
+from __builtins__ import *
+while True:
+
+    move(North)
+    plant(Entities.Bush)
+```
+
+### 收获
+
+```python
+# harvest wood
+from __builtins__ import *
+
+while True:
+    move(North)
+    if can_harvest():
+        harvest()
+```
+
+收获内容足够后,解锁运算符
+
+内容如下:
+
+运算符
+算术运算符：+, -, *, /, //, %, **
+比较运算符：==, !=, <=, >=, <, >
+布尔运算符：not, and, or
+
+
+
