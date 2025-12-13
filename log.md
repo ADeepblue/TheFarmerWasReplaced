@@ -259,3 +259,93 @@ while True:
 
 解锁了浇树,还有函数,还有树
 # 1.7v
+```python
+from __builtins__ import *
+clear()
+size_num = get_world_size()
+
+
+def single_do(line_index,row_index,size_num):
+	if (line_index+row_index) % 2 == 0:
+		if line_index < size_num // 2:
+			plant(Entities.Tree)
+		else:
+			plant(Entities.Carrot)
+	else:
+		save_harvest()
+
+	if get_water() <=0.5:
+		use_item(Items.Water)
+
+def save_harvest():
+	if can_harvest():
+		harvest()
+
+# till the field in second row
+for line_index in range(size_num):
+	for row_index in range(size_num):
+		if (line_index+row_index) % 2 == 0:
+			till()
+		else:
+			save_harvest()
+		move(North)
+	move(East)
+
+#main loop
+while True:
+	for line_index in range(size_num):
+		for row_index in range(size_num):
+			save_harvest()
+			single_do(line_index,row_index,size_num)
+			move(North)
+		move(East)
+```
+更新了树木版本的1
+
+## harvest_wood
+
+草目混种版本代码
+
+```python
+# 种植灌木并收获灌木,顺带收获草
+
+from __builtins__ import *
+from utils import *
+from utils import safe_harvest
+clear()
+size_num = get_world_size()
+at_least_percent = 0.9
+
+def do(line_index,row_index,size_num):
+	if (line_index+row_index) % 2 == 0:
+		plant(Entities.Tree)
+	else:
+		safe_harvest()
+
+	if get_water() <=at_least_percent:
+		use_item(Items.Water)
+
+
+
+# till the field in second row
+for line_index in range(size_num):
+	for row_index in range(size_num):
+		safe_harvest()
+		if (line_index+row_index) % 2 == 0:
+			till()
+
+		move(North)
+	move(East)
+
+#main loop
+
+while True:
+	for line_index in range(size_num):
+		for row_index in range(size_num):
+			safe_harvest()
+			do(line_index,row_index,size_num)
+			move(North)
+		move(East)
+```
+
+无法密集种植,会延迟时间
