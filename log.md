@@ -133,8 +133,27 @@ while True:
 比较运算符：==, !=, <=, >=, <, >
 布尔运算符：not, and, or
 
-后续追加
+后续追加可行版本
+```python
+from __builtins__ import *
 
+clear()
+
+while True:
+    move(North)
+    plant(Entities.Bush)
+    if can_harvest():
+        harvest()
+    move(North)
+    plant(Entities.Bush)
+    if can_harvest():
+        harvest()
+    move(North)
+    plant(Entities.Bush)
+    if can_harvest():
+        harvest()
+
+```
 
 
 ## 1.5v
