@@ -37,6 +37,7 @@ change_hat(Hats.Gray_Hat)
 
 灰帽子只是一种,还有以下
 ```python
+from __builtins__ import *
 Hats.Purple_Hat
 Hats.Green_Hat
 Hats.Brown_Hat
