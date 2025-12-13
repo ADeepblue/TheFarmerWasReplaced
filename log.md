@@ -200,3 +200,59 @@ while True:
         harvest()
 ```
 现在都可以自动化了,其实挺舒服
+
+解锁变量名后,可以使用for循环,不用那么麻烦了
+
+另外,解锁了感官,还有扩展了土地面积
+
+get_pos_x()
+get_pos_y()
+num_items(item)可以获取物品数量
+get_entity_type可以返回类型,比如说
+get_entity_type() == Entities.Bush
+get_world_size()可以返回土地大小
+None
+断点debug
+
+## 1.6v
+all in one
+
+```python
+# 1.6v
+# till the field, plant the carrot and get hay and wood
+
+from __builtins__ import *
+clear()
+size_num = get_world_size()
+
+# till the field in second row
+move(East)
+for index in range(size_num):
+    till()
+    move(North)
+
+# back to the (0,0)
+move(West)
+
+#main loop
+while True:
+    for line_index in range(size_num):
+        for row_index in range(size_num):
+            if line_index == 0:
+                if can_harvest():
+                    harvest()
+                plant(Entities.Bush)
+                move(North)
+            elif line_index == 1:
+                if can_harvest():
+                    harvest()
+                plant(Entities.Carrot)
+                move(North)
+            else:
+                if can_harvest():
+                    harvest()
+                move(North)
+
+
+        move(East)
+```
