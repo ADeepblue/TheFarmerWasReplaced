@@ -5,7 +5,7 @@ from utils import *
 from utils import safe_harvest
 clear()
 size_num = get_world_size()
-at_least_percent = 0.9
+at_least_percent = 1
 
 def do(line_index,row_index,size_num):
 	if (line_index+row_index) % 2 == 0:
