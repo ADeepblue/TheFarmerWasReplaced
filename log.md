@@ -168,4 +168,35 @@ while True:
 
 种植胡萝卜所需的耗材是干草和木材。请注意：调用 plant(Entities.Carrot) 函数种植胡萝卜时，这些耗材（干草和木材）会被消耗一定数量。
 
-但好像意识到一个事,不需要通过for循环来搞定,只要能重复收获就行了
+循环代码
+```python
+# 1.5v
+## 说明
+# 种植胡萝卜并收获胡萝卜
+
+from __builtins__ import *
+
+clear()
+
+till()
+move(North)
+till()
+move(North)
+till()
+move(North)
+
+while True:
+    move(North)
+    plant(Entities.Carrot)
+    if can_harvest():
+        harvest()
+    move(North)
+    plant(Entities.Carrot)
+    if can_harvest():
+        harvest()
+    move(North)
+    plant(Entities.Carrot)
+    if can_harvest():
+        harvest()
+```
+现在都可以自动化了,其实挺舒服
