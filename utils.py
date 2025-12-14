@@ -17,3 +17,11 @@ def main_do(line_index,row_index,size_num):
 def safe_harvest():
 	if can_harvest():
 		harvest()
+
+def till_all_field(size_num):
+	for r in range(size_num):
+		for j in range(size_num):
+			safe_harvest()
+			till()
+			move(North)
+		move(East)
