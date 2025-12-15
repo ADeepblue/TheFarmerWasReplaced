@@ -11,8 +11,11 @@ def mix_plant():
 	to_position(((random() * work_size) // 1, (random() * work_size) // 1))
 	while True:
 		pre_position = (get_pos_x(), get_pos_y())
-		next_plant, position = get_companion()
-
+		if get_companion() != None:
+			next_plant, position = get_companion()
+		else:
+			to_position(((random() * work_size) // 1, (random() * work_size) // 1))
+			break
 		to_position(position)
 
 		if (next_plant == Entities.Carrot) and (get_ground_type() != Grounds.Soil):
@@ -41,5 +44,5 @@ def mix_plant():
 for _ in range(max_drones()):
 	do_a_flip()
 	spawn_drone(mix_plant)
-	if not spawn_drone(mix_plant):
+	if max_drones() == num_drones():
 		mix_plant()
