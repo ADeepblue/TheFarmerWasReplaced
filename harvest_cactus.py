@@ -5,8 +5,8 @@ from utils import *
 # main
 clear()
 
-# world_size = get_world_size()
-world_size = 8
+world_size = get_world_size()
+# world_size = 8
 
 # till the field
 for line_index in range(world_size):
