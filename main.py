@@ -4,24 +4,12 @@
 from __builtins__ import *
 from utils import *
 clear()
-size_num = get_world_size()
-
-
-# till the field in second row
-for line_index in range(size_num):
-	for row_index in range(size_num):
-		if (line_index+row_index) % 2 == 0:
-			till()
-		else:
-			safe_harvest()
+world_size = get_world_size()
+def harvest_column():
+	for _ in range(world_size):
+		safe_harvest()
 		move(North)
-	move(East)
 
-#main loop
 while True:
-	for line_index in range(size_num):
-		for row_index in range(size_num):
-			safe_harvest()
-			main_do(line_index, row_index, size_num)
-			move(North)
+	if spawn_drone(harvest_column):
 		move(East)
