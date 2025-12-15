@@ -48,3 +48,43 @@ def to_position(position):
 def water_the_field(limit_water_percent):
 	if get_water() <=limit_water_percent:
 		use_item(Items.Water)
+
+def safe_turn_to_soil():
+	if get_ground_type() != Grounds.Soil:
+		safe_harvest()
+		till()
+
+def to_position_plus(position):
+	x = position[0]
+	y = position[1]
+	x_now = get_pos_x()
+	y_now = get_pos_y()
+	# 如果x_now在 8,world_size是10,x是2
+	if get_world_size()-x_now+x < x_now-x:
+		for _ in range(get_world_size()-x_now+x):
+			move(East)
+	# 如果x_now在2,world_size是10,x是8
+	elif get_world_size()-x+x_now < x - x_now:
+		for _ in range(get_world_size()-x+x_now):
+			move(West)
+	else:
+		if x_now < x:
+			for _ in range(x-x_now):
+				move(East)
+		elif x_now > x:
+			for _ in range(x_now-x):
+				move(West)
+
+	if get_world_size()-y_now+y < y_now - y:
+		for _ in range(get_world_size()-y_now+y):
+			move(North)
+	elif get_world_size()-y+y_now < y - y_now:
+		for _ in range(get_world_size()-y+y_now):
+			move(South)
+	else:
+		if y_now < y:
+			for _ in range(y-y_now):
+				move(North)
+		elif y_now > y:
+			for _ in range(y_now-y):
+				move(South)
