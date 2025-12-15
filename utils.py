@@ -17,6 +17,8 @@ def main_do(line_index,row_index,size_num):
 def safe_harvest():
 	if can_harvest():
 		harvest()
+		return True
+	return False
 
 def till_all_field(size_num):
 	for r in range(size_num):
@@ -71,3 +73,12 @@ def to_position(position):
 		elif y_now > y:
 			for _ in range(y_now-y):
 				move(South)
+
+def back_zero():
+	to_position((0, 0))
+
+def get_index(list,value):
+	for index in range(len(list)):
+		if list[index] == value:
+			return index
+	return None
