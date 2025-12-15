@@ -43,7 +43,7 @@ while True:
 		for position_list in bad_pumpkin_list:
 			x = position_list[0]
 			y = position_list[1]
-			to_position(x,y)
+			to_position((x,y))
 			if not can_harvest():
 				plant(Entities.Pumpkin)
 				temp_list.append([x,y])
@@ -51,7 +51,7 @@ while True:
 
 		if len(temp_list) == 0:
 			safe_harvest()
-			to_position(0,0)
+			to_position((0,0))
 			break
 
 
