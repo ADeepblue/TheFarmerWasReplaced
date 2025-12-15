@@ -1,45 +1,26 @@
 from __builtins__ import *
 from utils import *
 
+# parameter setting
+Cactus_Water_Level = 0.6
+
 # main
 clear()
 
-to_position((0,0))
-
-
 world_size = get_world_size()
-# till the field and plant the cactus
 
-plant(Entities.Bush)
+# till the field
 
-substance = world_size*2**(num_unlocked(Unlocks.Mazes)-1)
-use_item(Items.Weird_Substance,substance)
+def row_till_task():
+	to_position((line_index,0))
+	for row_index in range(world_size):
+		safe_turn_to_soil()
+		water_the_field(Cactus_Water_Level)
+		move(North)
 
-x,y = measure()
-direction = [North,East,South,West]
-index = 0
 
-while True:
-	x_now = get_pos_x()
-	y_now = get_pos_y()
-	if (x_now==x) and (y_now==y):
-		do_a_flip()
-		harvest()
-	# 可以直行可以左转时选左转,同时index+=1
-	if can_move(direction[index%4]) and can_move(direction[(index+1)%4]):
-		move(direction[(index+1)%4])
-		index += 1
-	# 可以直行不能左转时直行,index不变
-	elif can_move(direction[index%4]) and not can_move(direction[(index+1)%4]):
-		move(direction[index%4])
-	# 不能直行只能左转时左转
-	elif not can_move(direction[index%4]) and can_move(direction[(index+1)%4]):
-		move(direction[(index+1)%4])
-		index += 1
-	# 不能直行不能左转时往右看
-	elif not can_move(direction[index%4]) and not can_move(direction[(index+1)%4]):
-		index += 3
+for line_index in range(world_size):
+	if num_drones() < max_drones():
+		spawn_drone(row_till_task)
 	else:
-		index += 1
-
-
+		row_till_task()
