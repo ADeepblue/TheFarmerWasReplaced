@@ -349,3 +349,86 @@ while True:
 ```
 
 无法密集种植,会延迟时间
+
+
+
+fertilizer版本代码
+
+跳过
+
+
+## 冒泡排序错误版本
+```python
+from __builtins__ import *
+from utils import *
+
+# main
+clear()
+
+to_position((0,0))
+
+
+world_size = get_world_size()
+# till the field and plant the cactus
+
+for line_index in range(get_world_size()):
+	till()
+	plant(Entities.Cactus)
+	move(East)
+
+# 不逆序
+not_reverse_flag = True
+
+pre_size = measure()
+for line_index in range(world_size):
+
+	# 从左到右
+	if not_reverse_flag:
+		for loop_num in range(world_size - line_index -1):
+			move(East)
+			print(measure())
+			now_size = measure()
+			if now_size < pre_size:
+				swap(West)
+			else:
+				pre_size = now_size
+		print("S")
+	# 从右到左
+	else:
+		for loop_num in range(world_size - line_index):
+			move(West)
+			print(measure())
+			now_size = measure()
+			if now_size > pre_size:
+				swap(East)
+			else:
+				pre_size = now_size
+		print("E")
+
+	not_reverse_flag = not not_reverse_flag
+
+harvest()
+```
+但是最后意识到,似乎,从右到左不可行,就是不能右到左直接扫过来,起始位置比较重要
+
+
+## 并行无人机
+巨型农场
+
+这个极其强大的解锁项让你能够使用多架无人机。
+
+和以前一样，一开始只有一架无人机。额外的无人机必须先被生成，且程序终止后便会消失。
+每架无人机运行的都是自己独立的程序。新无人机可以使用 spawn_drone(function) 函数生成。
+
+def drone_function():
+    move(North)
+    do_a_flip()
+
+spawn_drone(drone_function)
+
+以上代码会在运行 spawn_drone(function) 命令的无人机所在位置生成一架新的无人机。新无人机随后开始执行指定的函数，完成后便会自动消失。
+
+无人机之间不会相互碰撞。
+
+使用 max_drones() 获取可同时存在的无人机数量上限。
+使用 num_drones() 获取农场上已有的无人机数量。
