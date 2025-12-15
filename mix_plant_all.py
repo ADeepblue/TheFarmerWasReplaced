@@ -8,7 +8,7 @@ limit_water_percent = 0.8
 work_size = get_world_size()
 
 def mix_plant():
-	to_position(place)
+	to_position(((random() * work_size) // 1, (random() * work_size) // 1))
 	while True:
 		pre_position = (get_pos_x(), get_pos_y())
 		next_plant, position = get_companion()
@@ -34,13 +34,11 @@ def mix_plant():
 			if get_entity_type() == None:
 				to_position(((random()*work_size)//1,(random()*work_size)//1))
 				break
-
+		quick_print(num_drones())
 		to_position(position)
 
 
-spilt_start = [((1/4*work_size)//1,(3/4*work_size)//1),((3/4*work_size)//1,(3/4*work_size)//1),((1/4*work_size)//1,(1/4*work_size)//1),((3/4*work_size)//1,(1/4*work_size)//1)]
-
-for place in spilt_start:
+for _ in range(max_drones()):
 	do_a_flip()
 	spawn_drone(mix_plant)
 	if not spawn_drone(mix_plant):
