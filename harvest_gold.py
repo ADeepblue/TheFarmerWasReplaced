@@ -25,7 +25,7 @@ while True:
 		x_now = get_pos_x()
 		y_now = get_pos_y()
 		if (x_now==x) and (y_now==y):
-			do_a_flip()
+			# do_a_flip()
 			harvest()
 			break
 		# 可以直行可以左转时选左转,同时index+=1
