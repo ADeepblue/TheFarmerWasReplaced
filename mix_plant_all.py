@@ -15,7 +15,7 @@ def mix_plant():
 			next_plant, position = get_companion()
 		else:
 			to_position(((random() * work_size) // 1, (random() * work_size) // 1))
-			break
+			continue
 		to_position(position)
 
 		if (next_plant == Entities.Carrot) and (get_ground_type() != Grounds.Soil):
@@ -31,13 +31,18 @@ def mix_plant():
 		use_item(Items.Fertilizer)
 
 		while True:
+			soil_flag = 0
 			if can_harvest():
+				if get_entity_type()== Entities.Carrot:
+					soil_flag = 1
 				harvest()
+				if soil_flag == 1:
+					till()
+
 				break
 			if get_entity_type() == None:
 				to_position(((random()*work_size)//1,(random()*work_size)//1))
 				break
-		quick_print(num_drones())
 		to_position(position)
 
 
