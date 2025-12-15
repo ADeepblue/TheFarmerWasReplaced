@@ -26,7 +26,9 @@ def till_all_field(size_num):
 			move(North)
 		move(East)
 
-def to_position(x,y):
+def to_position(position):
+	x = position[0]
+	y = position[1]
 	x_now = get_pos_x()
 	y_now = get_pos_y()
 	if x_now < x:
@@ -42,3 +44,7 @@ def to_position(x,y):
 	elif y_now > y:
 		for _ in range(y_now-y):
 			move(South)
+
+def water_the_field(limit_water_percent):
+	if get_water() <=limit_water_percent:
+		use_item(Items.Water)
