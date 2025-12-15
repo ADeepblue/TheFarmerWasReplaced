@@ -5,7 +5,7 @@ from utils import *
 clear()
 
 limit_water_percent = 0.8
-
+work_size = get_world_size()
 # set_world_size(3)
 
 while True:
@@ -32,3 +32,4 @@ while True:
 			break
 
 	to_position(position)
+
