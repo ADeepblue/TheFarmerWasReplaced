@@ -52,7 +52,7 @@ def harvest_all_spawn():
 			safe_harvest()
 			move(East)
 
-	for _ in range(get_world_size()):
+	for _ in range(get_world_size()-1):
 		tiny_sleep()
 		spawn_drone(line_harvest_task)
 		move(North)
@@ -75,13 +75,15 @@ def till_in_parallel():
 	def row_till_task():
 		for _ in range(get_world_size()):
 			safe_turn_to_soil()
-			move(North)
+			move(East)
 
 	for _ in range(get_world_size()):
+		tiny_sleep()
 		spawn_drone(row_till_task)
+		move(North)
+	row_till_task()
 
-
-
+# single, safe till function
 def safe_turn_to_soil():
 	if get_ground_type() != Grounds.Soil:
 		safe_harvest()
@@ -163,3 +165,8 @@ def tiny_sleep():
 	move(North)
 	move(South)
 
+# if do so quickly, some drones may not work successfully, specially like check between rows and lines
+def wait_for_all_drones_finished():
+	while True:
+		if num_drones() == 1:
+			break
