@@ -2,6 +2,7 @@ from __builtins__ import *
 from utils import *
 
 # main
+harvest_all_spawn()
 clear()
 
 limit_water_percent = 0.8
@@ -47,7 +48,7 @@ def mix_plant():
 
 
 for _ in range(max_drones()):
-	do_a_flip()
+	tiny_sleep()
 	spawn_drone(mix_plant)
 	if max_drones() == num_drones():
 		mix_plant()
