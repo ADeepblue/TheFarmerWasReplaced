@@ -3,8 +3,16 @@ from utils import *
 
 # main
 
-for row_index in range(get_world_size()):
-	for line_index in range(get_world_size()):
+back_zero()
+
+def line_harvest_task():
+	for _ in range(get_world_size()):
 		safe_harvest()
-		move(North)
-	move(East)
+		move(East)
+
+for _ in range(get_world_size()-1):
+	tiny_sleep()
+	spawn_drone(line_harvest_task)
+	move(North)
+
+line_harvest_task()
