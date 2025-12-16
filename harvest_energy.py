@@ -43,3 +43,5 @@ while True:
 			break
 
 	energy_list[max_index] = measure()
+
+
