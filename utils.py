@@ -14,31 +14,88 @@ def main_do(line_index,row_index,size_num):
 		use_item(Items.Water)
 
 
+# harvest function
+## safe harvest, no loop
 def safe_harvest():
 	if can_harvest():
 		harvest()
 		return True
 	return False
 
+## loop safe harvest, if cannot harvest, keep trying
+def loop_safe_harvest():
+	while True:
+		if safe_harvest():
+			break
+
+## harvest all with spawn drone,in parallel, keep trying final version
+
+def harvest_all_spawn_loop():
+	def line_harvest_task():
+		for _ in range(get_world_size()):
+			loop_safe_harvest()
+			move(East)
+
+	for _ in range(get_world_size()):
+		tiny_sleep()
+		spawn_drone(line_harvest_task)
+		move(North)
+
+	line_harvest_task()
+
+## harvest all with spawn drone,in parallel, single try version
+def harvest_all_spawn():
+	def line_harvest_task():
+		for _ in range(get_world_size()):
+			safe_harvest()
+			move(East)
+
+	for _ in range(get_world_size()):
+		tiny_sleep()
+		spawn_drone(line_harvest_task)
+		move(North)
+
+	line_harvest_task()
+
+# till function
+
+## only use for and varable
 def till_all_field(size_num):
 	for r in range(size_num):
 		for j in range(size_num):
 			safe_harvest()
 			till()
-			move(North)
+			move(East)
 		move(East)
 
+## use parallel, final version
+def till_in_parallel():
+	def row_till_task():
+		for _ in range(get_world_size()):
+			safe_turn_to_soil()
+			move(North)
+
+	for _ in range(get_world_size()):
+		spawn_drone(row_till_task)
 
 
-def water_the_field(limit_water_percent):
-	if get_water() <=limit_water_percent:
-		use_item(Items.Water)
 
 def safe_turn_to_soil():
 	if get_ground_type() != Grounds.Soil:
 		safe_harvest()
 		till()
 
+
+# water the field, single function
+def water_the_field(limit_water_percent):
+	if get_water() <=limit_water_percent:
+		use_item(Items.Water)
+
+
+
+# position function
+
+## to one position
 def to_position(position):
 	x = position[0]
 	y = position[1]
@@ -74,9 +131,11 @@ def to_position(position):
 			for _ in range(y_now-y):
 				move(South)
 
+## to zero zero position
 def back_zero():
 	to_position((0, 0))
 
+# get index in list
 def get_index(list,value):
 	for index in range(len(list)):
 		if list[index] == value:
@@ -84,13 +143,21 @@ def get_index(list,value):
 	return None
 
 
+# for all function,input function f
 def for_all(f):
 	def row():
-		for _ in range(get_world_size()-1):
+		for _ in range(get_world_size()):
 			f()
-			move(North)
+			move(East)
 		f()
 	for _ in range(get_world_size()-1):
-		if not spawn_drone(row):
-			row()
-		move(East)
+		tiny_sleep()
+		spawn_drone(row)
+		move(North)
+	row()
+
+# little delay function, for spawn drone safety
+def tiny_sleep():
+	move(North)
+	move(South)
+
