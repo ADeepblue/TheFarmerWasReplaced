@@ -82,3 +82,15 @@ def get_index(list,value):
 		if list[index] == value:
 			return index
 	return None
+
+
+def for_all(f):
+	def row():
+		for _ in range(get_world_size()-1):
+			f()
+			move(North)
+		f()
+	for _ in range(get_world_size()-1):
+		if not spawn_drone(row):
+			row()
+		move(East)
