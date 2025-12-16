@@ -1,5 +1,7 @@
 
 from __builtins__ import *
+# parameter setting
+Cautious_Water_Level = 0.6
 
 def main_do(line_index,row_index,size_num):
 	if (line_index+row_index) % 2 == 0:
