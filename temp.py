@@ -1,3 +1,4 @@
+# spawn cactus
 from __builtins__ import *
 from utils import *
 
@@ -10,78 +11,85 @@ from utils import *
 world_size = 32
 set_world_size(world_size)
 # till the field
+back_zero()
+till_in_parallel()
 
-def plant_Carrot():
-	plant(Entities.Carrot)
-	water_the_field(Cautious_Water_Level)
+back_zero()
+# functions
 
-# till_in_parallel()
-# for_all(plant_Carrot)
-#
-# def wait_for_all_drones_finished():
-# 	while True:
-# 		if num_drones() == 1:
-# 			break
-#
-# wait_for_all_drones_finished()
-#
-# harvest_all_spawn_loop()
-# while True:
-# 	do_a_flip()
-
-# def line_plant_task():
-# 	for _ in range(world_size):
-# 		plant_Carrot()
-# 		move(East)
-#
-# for _ in range(world_size-1):
-# 	wait_for(spawn_drone(line_plant_task))
-# 	move(North)
-#
-# line_plant_task()
-
-# def row_harvest_task():
-# 	for _ in range(get_world_size()):
-# 		safe_harvest()
-# 		move(North)
-
-
-
-# 2025 12 22 test
-flag = 0
-
-
-drone_handles = []
-def row_harvest_task():
-	# 示例行任务：横向遍历一行，收割并向东方向移动
-	global drone_handles
-	global world_size
-	global flag
-	for _ in range(get_world_size()):
-		safe_harvest()
+def plant_cactus_line_task():
+	for _ in range(world_size):
+		plant(Entities.Cactus)
 		move(East)
 
-	quick_print(flag)
-	quick_print(num_drones(),max_drones())
-	if num_drones() <= max_drones():
+def bubble_sort_line_task():
+	global row_index
+	to_position((0, row_index))
+	for line_index in range(get_world_size()):
+		pre_size = measure()
+		for _ in range(get_world_size() - line_index - 1):
+			move(East)
+			now_size = measure()
+			if now_size < pre_size:
+				swap(West)
+			else:
+				pre_size = now_size
+
+		to_position((0, row_index))
+
+def bubble_sort_row_task():
+	global line_index
+	to_position((line_index, 0))
+	for row_index in range(get_world_size()):
+		pre_size = measure()
+		for _ in range(get_world_size() - row_index - 1):
+			move(North)
+			now_size = measure()
+			if now_size < pre_size:
+				swap(South)
+			else:
+				pre_size = now_size
+
+		to_position((line_index, 0))
+
+# main
+# max 32 version
+while True:
+
+	# plant cactus
+	for _ in range(world_size-1):
 		tiny_sleep()
-		flag += 1
-		spawn_drone(row_harvest_task)
-
-
-
-
-
-
-
-# while True:
-for _ in range(max_drones()):
-	if num_drones() < max_drones():
-		tiny_sleep()
-		flag += 1
-		handle = spawn_drone(row_harvest_task)
-
-		# drone_handles.append(handle)
+		spawn_drone(plant_cactus_line_task)
 		move(North)
-	else:
-		row_harvest_task()
+
+	plant_cactus_line_task()
+	move(North)
+	# wait_for_all_drones_finished()
+
+	back_zero()
+	# line sort
+	for row_index in range(world_size-1):
+		tiny_sleep()
+		spawn_drone(bubble_sort_line_task)
+		move(North)
+
+	row_index += 1
+	bubble_sort_line_task()
+	move(North)
+	# wait_for_all_drones_finished()
+
+	back_zero()
+	move(West)
+	# row sort
+	for line_index in range(world_size-1,0,-1):
+		tiny_sleep()
+		spawn_drone(bubble_sort_row_task)
+		move(West)
+
+	line_index -= 1
+	bubble_sort_row_task()
+	move(West)
+	wait_for_all_drones_finished()
+
+	safe_harvest()
+	break
