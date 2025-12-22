@@ -556,3 +556,129 @@ for _ in range(max_drones()):
 很惊喜的发现,无人机能实现自我增值,可能在迷宫中遇到岔路的时候会很有用,但是,这样写,边界情况,无人机数量满了,然后32驾无人机,在最边界的情况,无人机要消失的时候,因为无法32+1变33导致消失前无法释放无人机,效果还不如主动控制,不过也是一种可行思路就是了
 
 玩到这里稍稍有点累了,花了精力探索编程农场的内存模型了到头来
+
+## 治愈植物成就
+
+```python
+from __builtins__ import *
+from utils import *
+
+# parameter setting
+Cactus_Water_Level = 0
+world_size = 32
+
+# set world
+# set_world_size(world_size)
+
+# init
+
+harvest_all_spawn()
+clear()
+## till the field
+back_zero()
+till_in_parallel()
+
+
+to_position((4,4))
+plant(Entities.Bush)
+use_item(Items.Weird_Substance)
+use_item(Items.Weird_Substance)
+```
+
+## 仙人掌反向排序成就
+```python
+from __builtins__ import *
+from utils import *
+
+# parameter setting
+Cactus_Water_Level = 0
+world_size = 4
+
+# set world
+set_world_size(world_size)
+
+# init
+
+harvest_all_spawn()
+clear()
+## till the field
+back_zero()
+till_in_parallel()
+
+
+# functions
+def plant_cactus_line_task():
+	for _ in range(world_size):
+		plant(Entities.Cactus)
+		move(East)
+
+def bubble_sort_line_task():
+	global row_index
+	to_position((0, row_index))
+	for line_index in range(get_world_size()):
+		pre_size = measure()
+		for _ in range(get_world_size() - line_index - 1):
+			move(East)
+			now_size = measure()
+			if now_size < pre_size:
+				pre_size = now_size
+			else:
+				swap(West)
+
+		to_position((0, row_index))
+
+def bubble_sort_row_task():
+	global line_index
+	to_position((line_index, 0))
+	for row_index in range(get_world_size()):
+		pre_size = measure()
+		for _ in range(get_world_size() - row_index - 1):
+			move(North)
+			now_size = measure()
+			if now_size < pre_size:
+				pre_size = now_size
+			else:
+				swap(South)
+		to_position((line_index, 0))
+
+# main loop
+# max 32 version
+while True:
+
+	# plant cactus
+	for _ in range(world_size-1):
+		tiny_sleep()
+		spawn_drone(plant_cactus_line_task)
+		move(North)
+
+	plant_cactus_line_task()
+	move(North)
+	# wait_for_all_drones_finished()
+
+	back_zero()
+	# line sort
+	for row_index in range(world_size-1):
+		tiny_sleep()
+		spawn_drone(bubble_sort_line_task)
+		move(North)
+
+	row_index += 1
+	bubble_sort_line_task()
+	move(North)
+	# wait_for_all_drones_finished()
+
+	back_zero()
+	move(West)
+	# row sort
+	for line_index in range(world_size-1,0,-1):
+		tiny_sleep()
+		spawn_drone(bubble_sort_row_task)
+		move(West)
+
+	line_index -= 1
+	bubble_sort_row_task()
+	move(West)
+	wait_for_all_drones_finished()
+
+	safe_harvest()
+```
