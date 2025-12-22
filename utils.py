@@ -77,11 +77,12 @@ def till_in_parallel():
 			safe_turn_to_soil()
 			move(East)
 
-	for _ in range(get_world_size()):
+	for _ in range(get_world_size()-1):
 		tiny_sleep()
 		spawn_drone(row_till_task)
 		move(North)
 	row_till_task()
+	move(North)
 
 # single, safe till function
 def safe_turn_to_soil():
@@ -98,6 +99,11 @@ def water_the_field(limit_water_percent):
 
 
 # position function
+
+## get postion,set
+def get_position():
+	return (get_pos_x(),get_pos_y())
+
 
 ## to one position
 def to_position(position):
@@ -165,7 +171,7 @@ def tiny_sleep():
 	move(North)
 	move(South)
 
-# if do so quickly, some drones may not work successfully, specially like check between rows and lines
+# If do so quickly, some drones may not work successfully, specially like check between rows and lines
 def wait_for_all_drones_finished():
 	while True:
 		if num_drones() == 1:
