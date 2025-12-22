@@ -46,6 +46,8 @@ def plant_Carrot():
 # 		move(North)
 
 
+
+# 2025 12 22 test
 flag = 0
 
 
@@ -59,8 +61,9 @@ def row_harvest_task():
 		safe_harvest()
 		move(East)
 
-	print(flag)
-	if num_drones() < max_drones():
+	quick_print(flag)
+	quick_print(num_drones(),max_drones())
+	if num_drones() <= max_drones():
 		tiny_sleep()
 		flag += 1
 		spawn_drone(row_harvest_task)
