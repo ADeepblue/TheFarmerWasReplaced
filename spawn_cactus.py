@@ -30,28 +30,34 @@ for line_index in range(world_size):
 				break
 
 # plant the cactus
-
-def row_plant_task():
-	to_position((line_index,0))
-	for _ in range(world_size):
-		plant(Entities.Cactus)
-		move(North)
-
-back_zero()
-
-for line_index in range(world_size):
-	if num_drones() < max_drones():
-		spawn_drone(row_plant_task)
-	else:
-		while True:
-			if num_drones() < max_drones():
-				spawn_drone(row_plant_task)
-				break
-
-# bubble sort main loop
-
-# parallel task
 while True:
+	def row_plant_task():
+		to_position((line_index,0))
+		for _ in range(world_size):
+			plant(Entities.Cactus)
+			move(North)
+
+	back_zero()
+
+	for line_index in range(world_size-1):
+		if num_drones() < max_drones():
+			spawn_drone(row_plant_task)
+		else:
+			while True:
+				if num_drones() < max_drones():
+					spawn_drone(row_plant_task)
+					break
+
+	if get_world_size() > max_drones()-1:
+		line_index = world_size -1
+		row_plant_task()
+
+	wait_for_all_drones_finished()
+
+	# bubble sort main loop
+
+	# parallel task
+
 	def bubble_sort_line_task():
 		#复位
 		to_position((0,line_index))
