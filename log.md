@@ -682,3 +682,182 @@ while True:
 
 	safe_harvest()
 ```
+
+## 栈溢出成就
+```python
+def bomb():
+    bomb()
+
+bomb()
+```
+
+## 导入循环
+```python
+# temp.py file
+# only for achieve
+from second_temp_done import *
+```
+```python
+# second_temp_done.py file
+from temp import *
+```
+
+## 帽子成就
+```python
+from __builtins__ import *
+from utils import *
+
+# parameter setting
+Cactus_Water_Level = 0
+world_size = 32
+
+# set world
+# set_world_size(world_size)
+
+# init
+
+Hats_list = [Hats.Brown_Hat,Hats.Cactus_Hat,Hats.Carrot_Hat,Hats.Gold_Hat,Hats.Golden_Cactus_Hat]
+
+to_position((5,5))
+
+def wear_hat():
+    change_hat(hat)
+    while True:
+        do_a_flip()
+
+for hat in Hats_list:
+    tiny_sleep()
+    spawn_drone(wear_hat)
+```
+
+## 一分钟10亿木材
+```python
+from __builtins__ import *
+from utils import *
+
+# parameter setting
+Cactus_Water_Level = 0.8
+world_size = 32
+
+# set world
+# set_world_size(world_size)
+
+# init
+clear()
+def plant_bush_and_tree():
+    x,y = get_position()
+    if (x+y) % 2 ==0:
+        plant(Entities.Tree)
+        water_the_field(Cactus_Water_Level)
+    else:
+        plant(Entities.Bush)
+        water_the_field(Cactus_Water_Level)
+
+
+
+back_zero()
+def line_plant_task():
+    while True:
+        for _ in range(world_size):
+            safe_harvest()
+            plant_bush_and_tree()
+            move(East)
+
+
+for _ in range(world_size-1):
+    tiny_sleep()
+    spawn_drone(line_plant_task)
+    move(North)
+
+line_plant_task()
+```
+
+## 快速巨型南瓜的最终版本
+
+```python
+# 32无人机版本 4*8
+from __builtins__ import *
+from utils import *
+
+# parameter setting
+Cautious_Water_Level = 0.6
+Num_line = 5
+Num_row = 8
+single_line_field = get_world_size() / Num_line
+single_row_field = get_world_size() / Num_row
+world_size = 32
+set_world_size(world_size)
+
+
+# init
+# clear()
+
+# till the field
+back_zero()
+till_in_parallel()
+
+back_zero()
+
+# main
+def single_plant_task():
+	to_position((line_num_index*single_line_field,row_num_index*single_row_field))
+	# plant the pumpkin
+	for row_index in range(single_row_field):
+		for line_index in range(single_line_field):
+			plant(Entities.Pumpkin)
+			water_the_field(Cautious_Water_Level)
+			move(East)
+		to_position((line_num_index * single_line_field, row_num_index * single_row_field+ row_index+1))
+
+		quick_print(row_num_index,(line_num_index * single_line_field, row_num_index * single_row_field))
+	to_position((line_num_index * single_line_field, row_num_index * single_row_field))
+	# check bad pumpkin
+
+	bad_pumpkin_list = []
+
+	for row_index in range(single_row_field):
+		for line_index in range(single_line_field):
+			if can_harvest() == False:
+				plant(Entities.Pumpkin)
+				bad_pumpkin_list.append(get_position())
+
+			move(East)
+		to_position((line_num_index * single_line_field, row_num_index * single_row_field+row_index+1))
+
+	to_position((line_num_index * single_line_field, row_num_index * single_row_field))
+
+	# kill all the bad pumpkin
+
+	while True:
+		temp_list = []
+		for position in bad_pumpkin_list:
+			to_position(position)
+			if not can_harvest():
+				plant(Entities.Pumpkin)
+				temp_list.append(position)
+
+		bad_pumpkin_list = temp_list
+
+		if len(temp_list) == 0:
+			break
+
+
+for row_num_index in range(Num_row):
+	for line_num_index in range(Num_line):
+		# quick_print(row_num_index,line_num_index)
+		if (line_num_index != Num_line-1) or (row_num_index != Num_row-1):
+			tiny_sleep()
+			spawn_drone(single_plant_task)
+			# single_plant_task()
+
+# 不需要加一,因为上面已经加过了
+# line_num_index += 1
+
+single_plant_task()
+
+wait_for_all_drones_finished()
+back_zero()
+safe_harvest()
+```
+
+但是打算优化成6*6的了,所以即将弃用
