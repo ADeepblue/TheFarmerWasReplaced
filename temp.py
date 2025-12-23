@@ -5,9 +5,9 @@ from utils import *
 # parameter setting
 Cautious_Water_Level = 0.6
 Num_line = 5
-Num_row = 8
-single_line_field = get_world_size() / Num_line
-single_row_field = get_world_size() / Num_row
+Num_row = 5
+single_line_field = 6
+single_row_field = 6
 world_size = 32
 set_world_size(world_size)
 
@@ -23,46 +23,48 @@ back_zero()
 
 # main
 def single_plant_task():
-	to_position((line_num_index*single_line_field,row_num_index*single_row_field))
-	# plant the pumpkin
-	for row_index in range(single_row_field):
-		for line_index in range(single_line_field):
-			plant(Entities.Pumpkin)
-			water_the_field(Cautious_Water_Level)
-			move(East)
-		to_position((line_num_index * single_line_field, row_num_index * single_row_field+ row_index+1))
-
-		quick_print(row_num_index,(line_num_index * single_line_field, row_num_index * single_row_field))
-	to_position((line_num_index * single_line_field, row_num_index * single_row_field))
-	# check bad pumpkin
-
-	bad_pumpkin_list = []
-
-	for row_index in range(single_row_field):
-		for line_index in range(single_line_field):
-			if can_harvest() == False:
-				plant(Entities.Pumpkin)
-				bad_pumpkin_list.append(get_position())
-
-			move(East)
-		to_position((line_num_index * single_line_field, row_num_index * single_row_field+row_index+1))
-
-	to_position((line_num_index * single_line_field, row_num_index * single_row_field))
-
-	# kill all the bad pumpkin
-
 	while True:
-		temp_list = []
-		for position in bad_pumpkin_list:
-			to_position(position)
-			if not can_harvest():
+		to_position((line_num_index*single_line_field,row_num_index*single_row_field))
+		# plant the pumpkin
+		for row_index in range(single_row_field):
+			for line_index in range(single_line_field):
 				plant(Entities.Pumpkin)
-				temp_list.append(position)
+				water_the_field(Cautious_Water_Level)
+				move(East)
+			to_position((line_num_index * single_line_field, row_num_index * single_row_field+ row_index+1))
 
-		bad_pumpkin_list = temp_list
+			quick_print(row_num_index,(line_num_index * single_line_field, row_num_index * single_row_field))
+		to_position((line_num_index * single_line_field, row_num_index * single_row_field))
+		# check bad pumpkin
 
-		if len(temp_list) == 0:
-			break
+		bad_pumpkin_list = []
+
+		for row_index in range(single_row_field):
+			for line_index in range(single_line_field):
+				if can_harvest() == False:
+					plant(Entities.Pumpkin)
+					bad_pumpkin_list.append(get_position())
+
+				move(East)
+			to_position((line_num_index * single_line_field, row_num_index * single_row_field+row_index+1))
+
+		to_position((line_num_index * single_line_field, row_num_index * single_row_field))
+
+		# kill all the bad pumpkin
+
+		while True:
+			temp_list = []
+			for position in bad_pumpkin_list:
+				to_position(position)
+				if not can_harvest():
+					plant(Entities.Pumpkin)
+					temp_list.append(position)
+
+			bad_pumpkin_list = temp_list
+
+			if len(temp_list) == 0:
+				safe_harvest()
+				break
 
 
 for row_num_index in range(Num_row):
@@ -77,7 +79,3 @@ for row_num_index in range(Num_row):
 # line_num_index += 1
 
 single_plant_task()
-
-wait_for_all_drones_finished()
-back_zero()
-safe_harvest()
