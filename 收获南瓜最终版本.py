@@ -4,7 +4,7 @@ from utils import *
 
 # parameter setting
 Cautious_Water_Level = 0.6
-Num_line = 5
+Num_line = 4
 Num_row = 8
 single_line_field = get_world_size() / Num_line
 single_row_field = get_world_size() / Num_row
@@ -64,20 +64,20 @@ def single_plant_task():
 		if len(temp_list) == 0:
 			break
 
+while True:
+	for row_num_index in range(Num_row):
+		for line_num_index in range(Num_line):
+			# quick_print(row_num_index,line_num_index)
+			if (line_num_index != Num_line-1) or (row_num_index != Num_row-1):
+				tiny_sleep()
+				spawn_drone(single_plant_task)
+				# single_plant_task()
 
-for row_num_index in range(Num_row):
-	for line_num_index in range(Num_line):
-		# quick_print(row_num_index,line_num_index)
-		if (line_num_index != Num_line-1) or (row_num_index != Num_row-1):
-			tiny_sleep()
-			spawn_drone(single_plant_task)
-			# single_plant_task()
+	# 不需要加一,因为上面已经加过了
+	# line_num_index += 1
 
-# 不需要加一,因为上面已经加过了
-# line_num_index += 1
+	single_plant_task()
 
-single_plant_task()
-
-wait_for_all_drones_finished()
-back_zero()
-safe_harvest()
+	wait_for_all_drones_finished()
+	back_zero()
+	safe_harvest()
