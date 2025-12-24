@@ -66,3 +66,5 @@ while True:
 			safe_harvest()
 			to_position((0, 0))
 			break
+
+	break
