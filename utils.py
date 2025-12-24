@@ -146,9 +146,9 @@ def back_zero():
 	to_position((0, 0))
 
 # get index in list
-def get_index(list,value):
-	for index in range(len(list)):
-		if list[index] == value:
+def get_index(list_,value):
+	for index in range(len(list_)):
+		if list_[index] == value:
 			return index
 	return None
 
@@ -176,3 +176,127 @@ def wait_for_all_drones_finished():
 	while True:
 		if num_drones() == 1:
 			break
+
+
+def to_position_Bone_easy(position, direction_now):
+	def move_plus(direction,distance):
+		# 前进路上没有障碍
+		for step in range(distance):
+			safe_move(direction)
+
+	if position == None:
+		return None
+
+	x = position[0]
+	y = position[1]
+
+	x_now = get_pos_x()
+	y_now = get_pos_y()
+	# 如果不在同列也不在同行,分类讨论时不考虑x,y都相等,这不可能
+	if (x != x_now) and (y != y_now):
+		if direction_now in [North,South]:
+
+			if y_now < y:
+				move_plus(North,y - y_now)
+
+			elif y_now > y:
+				move_plus(South,y_now - y)
+
+			if x_now < x:
+				move_plus(East,x - x_now)
+				return East
+
+			elif x_now > x:
+				move_plus(West,x_now - x)
+				return West
+		elif direction_now in [West,East]:
+
+			if y_now < y:
+				move_plus(North,y - y_now)
+
+			elif y_now > y:
+				move_plus(South,y_now
+				          - y)
+
+			if x_now < x:
+				move_plus(East,x - x_now)
+				return East
+			elif x_now > x:
+				move_plus(West,x_now - x)
+				return West
+
+	# 如果x相同,即在同列
+	elif x == x_now:
+
+		# 如果方向在东西方向上
+		if direction_now in [West,East]:
+			# 上方
+			if y-y_now > 0:
+				move_plus(North,y-y_now)
+				return North
+			# 下方
+			else:
+				move_plus(South,y_now-y)
+				return South
+
+
+		# 如果同向
+		elif ( (((y-y_now) > 0) and (direction_now == North)) or (((y-y_now) < 0) and (direction_now == South)) ):
+			move_plus(direction_now,abs(y-y_now))
+			return direction_now
+
+
+		# 如果反向
+		elif ( (((y-y_now) < 0) and (direction_now == North)) or (((y-y_now) > 0) and (direction_now == South)) ):
+			# 如果x不在左边缘
+			if x_now != 0:
+				move(West)
+				direction = to_position_Bone_easy(position,West)
+				return direction
+			else:
+				move(East)
+				direction = to_position_Bone_easy(position,West)
+				return direction
+
+	# 如果y相同,即在同行
+	elif y == y_now:
+		# 如果方向在南北方向上
+		if direction_now in [North,South]:
+			# 右边
+			if x-x_now > 0:
+				move_plus(East,x-x_now)
+				return East
+			# 左边
+			else:
+				move_plus(West,x_now-x)
+				return West
+
+		# 如果同向
+		if ( (((x-x_now) > 0) and (direction_now == East)) or (((x-x_now) < 0) and (direction_now == West)) ):
+			move_plus(direction_now,abs(x-x_now))
+			return direction_now
+
+		else:
+			# 如果x不在下边缘
+			if y_now != 0:
+				move(South)
+				direction = to_position_Bone_easy(position,West)
+				return direction
+			else:
+				move(North)
+				direction = to_position_Bone_easy(position,West)
+				return direction
+
+def safe_move(direct):
+	direct_list = [West,North,East,South]
+	if move(direct) == False:
+		index = get_index(direct_list,direct)
+		if move(direct_list[(index+1) % 4]):
+			return direct_list[(index+1) % 4]
+		elif move(direct_list[(index-1) % 4]):
+			return direct_list[(index-1) % 4]
+		else:
+			change_hat(Hats.Gold_Hat)
+			return None
+
+	return direct
