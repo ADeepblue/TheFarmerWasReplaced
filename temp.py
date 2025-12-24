@@ -1,81 +1,155 @@
-# 32无人机版本 4*8
 from __builtins__ import *
 from utils import *
 
 # parameter setting
-Cautious_Water_Level = 0.6
-Num_line = 5
-Num_row = 5
-single_line_field = 6
-single_row_field = 6
+Cactus_Water_Level = 0.5
 world_size = 32
-set_world_size(world_size)
 
+# set world
+# set_world_size(world_size)
 
 # init
-# clear()
+clear()
+change_hat(Hats.Dinosaur_Hat)
 
-# till the field
-back_zero()
-till_in_parallel()
 
-back_zero()
+# print(measure())
 
-# main
-def single_plant_task():
-	while True:
-		to_position((line_num_index*single_line_field,row_num_index*single_row_field))
-		# plant the pumpkin
-		for row_index in range(single_row_field):
-			for line_index in range(single_line_field):
-				plant(Entities.Pumpkin)
-				water_the_field(Cautious_Water_Level)
+def safe_move(direct):
+	if move(direct) == False:
+		change_hat(Hats.Gold_Hat)
+
+
+def to_position_Bone(x, y, x_or_not):
+	x_now = get_pos_x()
+	y_now = get_pos_y()
+	if x_now < x:
+		for _ in range(x - x_now):
+			safe_move(East)
+	elif x_now > x:
+		for _ in range(x_now - x):
+			safe_move(West)
+
+	if y_now < y:
+		for _ in range(y - y_now):
+			safe_move(North)
+	elif y_now > y:
+		for _ in range(y_now - y):
+			safe_move(South)
+
+	return not x_or_not
+
+
+def to_position_Bone_easy(position, direction_now):
+	def move_plus(direction,distance):
+		# 前进路上没有障碍
+		flag = 0
+		for step in range(distance):
+			safe_move(direction)
+
+	x = position[0]
+	y = position[1]
+
+	x_now = get_pos_x()
+	y_now = get_pos_y()
+	# 如果不在同列也不在同行,分类讨论时不考虑x,y都相等,这不可能
+	if (x != x_now) and (y != y_now):
+		if direction_now in [North,South]:
+
+			if x_now < x:
+				move_plus(East,x - x_now)
+
+			elif x_now > x:
+				move_plus(West,x_now - x)
+
+			if y_now < y:
+				move_plus(North,y - y_now)
+				return North
+
+			elif y_now > y:
+				move_plus(South,y_now - y)
+				return South
+
+		elif direction_now in [West,East]:
+
+			if y_now < y:
+
+				move_plus(North,y - y_now)
+
+			elif y_now > y:
+				move_plus(South,y_now - y)
+
+			if x_now < x:
+				move_plus(East,x - x_now)
+				return East
+			elif x_now > x:
+				move_plus(West,x_now - x)
+				return West
+
+	# 如果x相同,即在同列
+	elif x == x_now:
+
+		# 如果方向在东西方向上
+		if direction_now in [West,East]:
+			# 上方
+			if y-y_now > 0:
+				move_plus(North,y-y_now)
+				return North
+			# 下方
+			else:
+				move_plus(South,y_now-y)
+				return South
+
+
+		# 如果同向
+		elif ( (((y-y_now) > 0) and (direction_now == North)) or (((y-y_now) < 0) and (direction_now == South)) ):
+			move_plus(direction_now,abs(y-y_now))
+			return direction_now
+
+
+		# 如果反向
+		elif ( (((y-y_now) < 0) and (direction_now == North)) or (((y-y_now) > 0) and (direction_now == South)) ):
+			# 如果x不在左边缘
+			if x_now != 0:
+				move(West)
+				direction = to_position_Bone_easy(position,West)
+				return direction
+			else:
 				move(East)
-			to_position((line_num_index * single_line_field, row_num_index * single_row_field+ row_index+1))
+				direction = to_position_Bone_easy(position,West)
+				return direction
 
-			quick_print(row_num_index,(line_num_index * single_line_field, row_num_index * single_row_field))
-		to_position((line_num_index * single_line_field, row_num_index * single_row_field))
-		# check bad pumpkin
+	# 如果y相同,即在同行
+	elif y == y_now:
+		# 如果方向在南北方向上
+		if direction_now in [North,South]:
+			# 右边
+			if x-x_now > 0:
+				move_plus(East,y-y_now)
+				return East
+			# 左边
+			else:
+				move_plus(West,y_now-y)
+				return West
 
-		bad_pumpkin_list = []
+		# 如果同向
+		if ( (((x-x_now) > 0) and (direction_now == East)) or (((x-x_now) < 0) and (direction_now == West)) ):
+			move_plus(direction_now,abs(x-x_now))
+			return direction_now
 
-		for row_index in range(single_row_field):
-			for line_index in range(single_line_field):
-				if can_harvest() == False:
-					plant(Entities.Pumpkin)
-					bad_pumpkin_list.append(get_position())
-
-				move(East)
-			to_position((line_num_index * single_line_field, row_num_index * single_row_field+row_index+1))
-
-		to_position((line_num_index * single_line_field, row_num_index * single_row_field))
-
-		# kill all the bad pumpkin
-
-		while True:
-			temp_list = []
-			for position in bad_pumpkin_list:
-				to_position(position)
-				if not can_harvest():
-					plant(Entities.Pumpkin)
-					temp_list.append(position)
-
-			bad_pumpkin_list = temp_list
-
-			if len(temp_list) == 0:
-				safe_harvest()
-				break
+		else:
+			# 如果x不在下边缘
+			if y_now != 0:
+				move(South)
+				direction = to_position_Bone_easy(position,West)
+				return direction
+			else:
+				move(North)
+				direction = to_position_Bone_easy(position,West)
+				return direction
 
 
-for row_num_index in range(Num_row):
-	for line_num_index in range(Num_line):
-		# quick_print(row_num_index,line_num_index)
-		if (line_num_index != Num_line-1) or (row_num_index != Num_row-1):
-			tiny_sleep()
-			spawn_drone(single_plant_task)
-			# single_plant_task()
+target = measure()
 
-# 不需要加一,因为上面已经加过了
-# line_num_index += 1
+direction = to_position_Bone_easy(target,North)
 
-single_plant_task()
