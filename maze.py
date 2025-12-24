@@ -10,6 +10,7 @@ def safe_move(direct):
 
 	if (target[0] == get_pos_x()) and (target[1] == get_pos_y()):
 		snake_length += 1
+		quick_print(snake_length)
 		target = measure()
 
 	if temp ==False:
@@ -182,7 +183,7 @@ def bend_to_side(position, direction_now, snake_length):
 	if snake_length < get_world_size():
 		temp_direction = to_position_Bone_easy((0, snake_length-1), temp_direction)
 		direction = to_position_Bone_easy(position, temp_direction)
-
+		return direction
 	else:
 		temp_direction = to_position_Bone_easy((0, get_world_size()-1), temp_direction)
 		direction = to_position_Bone_easy(position, temp_direction)
@@ -241,8 +242,11 @@ while True:
 		# snake_length += 1
 	elif (snake_length >= 1.5* get_world_size()) and (snake_length <get_world_size()*(get_world_size()-3)):
 		direction = to_position_Bone_easy((0,0),direction)
-		for step in range(snake_length):
+
+		loop_num = get_world_size()+(((snake_length-get_world_size())/(get_world_size()-1))//2+1)*2*(get_world_size()-1)
+		for step in range(loop_num):
 			target_move = final_move_function()
+			direction = safe_move(target_move)
 
 		direction = to_position_Bone_easy(target,direction)
 		# snake_length += 1
