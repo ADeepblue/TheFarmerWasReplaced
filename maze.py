@@ -2,50 +2,53 @@ from __builtins__ import *
 from utils import *
 
 
-def safe_move(direct):
+def safe_move(next_direct):
 	global target
 	global snake_length
+	global direction
 	# direct_list = [West,North,East,South]
-	temp = move(direct)
+	temp = move(next_direct)
 
 	if (target[0] == get_pos_x()) and (target[1] == get_pos_y()):
 		snake_length += 1
-		quick_print(snake_length)
+		# quick_print(snake_length)
 		target = measure()
 
 	if temp ==False:
 		return None
 
-	return direct
+	direction = next_direct
 
-def to_position_Bone_easy(position, direction_now):
-	def back_direct(direct):
-		if direct == East:
+def to_position_Bone_easy(position):
+	def back_direct(direction):
+		if direction == East:
 			return West
-		elif direct == West:
+		elif direction == West:
 			return East
-		elif direct == North:
+		elif direction == North:
 			return South
-		elif direct == South:
+		elif direction == South:
 			return North
 		else:
 			return None
 
 	def x_x_now_and_turn(x,x_now):
+		global direction
 		if x_now > x:
 			move_plus(West, x_now - x)
-			return West
+			direction = West
 		if x_now < x:
 			move_plus(East, x - x_now)
-			return East
+			direction = East
 
 	def y_y_now_and_turn(y,y_now):
+		global direction
 		if y_now > y:
 			move_plus(South, y_now - y)
-			return South
+			direction = South
 		if y_now < y:
 			move_plus(North, y - y_now)
-			return North
+			direction = North
 
 	def move_plus(direction, distance):
 		# 前进路上没有障碍
@@ -56,6 +59,8 @@ def to_position_Bone_easy(position, direction_now):
 		# if distance < 0:
 		# 	for _ in range(abs(distance)):
 		# 		safe_move(direction)
+
+	global direction
 
 	if position == None:
 		return None
@@ -68,126 +73,122 @@ def to_position_Bone_easy(position, direction_now):
 	# 如果不在同列也不在同行,分类讨论时不考虑x,y都相等,这不可能
 	if (x != x_now) and (y != y_now):
 
-		if direction_now == North:
+		if direction == North:
 			if y_now < y:
 				move_plus(North,y-y_now)
 
-				return x_x_now_and_turn(x,x_now)
+				x_x_now_and_turn(x,x_now)
 
 			else:
 				x_x_now_and_turn(x,x_now)
 
 				move_plus(South,y_now-y)
-				return South
+				direction = South
 
 
-		elif direction_now == South:
+		elif direction == South:
 			if y_now > y:
 				move_plus(South,y_now-y)
-				return x_x_now_and_turn(x,x_now)
+				x_x_now_and_turn(x,x_now)
 
 			else:
 				x_x_now_and_turn(x,x_now)
 
 				move_plus(North,y-y_now)
-				return North
+				direction = North
 
-		elif direction_now == West:
+		elif direction == West:
 			if x_now > x:
 				move_plus(West,x_now-x)
-				return y_y_now_and_turn(y,y_now)
+				y_y_now_and_turn(y,y_now)
 
 			else:
 				y_y_now_and_turn(y,y_now)
 				move_plus(East,x-x_now)
-				return East
+				direction = East
 
-		elif direction_now == East:
+		elif direction == East:
 			if x > x_now:
 				move_plus(East,x-x_now)
-				return y_y_now_and_turn(y,y_now)
+				y_y_now_and_turn(y,y_now)
 
 			else:
 				y_y_now_and_turn(y,y_now)
 				move_plus(West,x_now-x)
-				return West
+				direction = West
 
 	# 如果x相同,即在同列
 	elif x == x_now:
 
 		# 如果方向在东西方向上
-		if direction_now in [West, East]:
+		if direction in [West, East]:
 			# 上方
 			if y - y_now > 0:
 				move_plus(North, y - y_now)
-				return North
+				direction = North
 			# 下方
 			else:
 				move_plus(South, y_now - y)
-				return South
+				direction = South
 
 
 		# 如果同向
-		elif ((((y - y_now) > 0) and (direction_now == North)) or (((y - y_now) < 0) and (direction_now == South))):
-			move_plus(direction_now, abs(y - y_now))
-			return direction_now
+		elif ((((y - y_now) > 0) and (direction == North)) or (((y - y_now) < 0) and (direction == South))):
+			move_plus(direction, abs(y - y_now))
+			# return direction_now
+			direction = direction
 
 
 		# 如果反向
-		elif ((((y - y_now) < 0) and (direction_now == North)) or (((y - y_now) > 0) and (direction_now == South))):
+		elif ((((y - y_now) < 0) and (direction == North)) or (((y - y_now) > 0) and (direction == South))):
 			# 如果x不在左边缘
 			if x_now != 0:
 				move(West)
-				direction = to_position_Bone_easy(position, West)
-				return direction
+				to_position_Bone_easy(position)
 			else:
 				move(East)
-				direction = to_position_Bone_easy(position, West)
-				return direction
+				to_position_Bone_easy(position)
 
 	# 如果y相同,即在同行
 	elif y == y_now:
 		# 如果方向在南北方向上
-		if direction_now in [North, South]:
+		if direction in [North, South]:
 			# 右边
 			if x - x_now > 0:
 				move_plus(East, x - x_now)
-				return East
+				direction = East
 			# 左边
 			else:
 				move_plus(West, x_now - x)
-				return West
+				direction = West
 
 		# 如果同向
-		if ((((x - x_now) > 0) and (direction_now == East)) or (((x - x_now) < 0) and (direction_now == West))):
-			move_plus(direction_now, abs(x - x_now))
-			return direction_now
+		if ((((x - x_now) > 0) and (direction == East)) or (((x - x_now) < 0) and (direction == West))):
+			move_plus(direction, abs(x - x_now))
 
 		else:
 			# 如果x不在下边缘
 			if y_now != 0:
 				move(South)
-				direction = to_position_Bone_easy(position, West)
-				return direction
+				to_position_Bone_easy(position)
+
 			else:
 				move(North)
-				direction = to_position_Bone_easy(position, West)
-				return direction
+				to_position_Bone_easy(position)
 
-def bend_to_side(position, direction_now, snake_length):
+
+def bend_to_side(position,  snake_length):
 	# temp_direction = to_position_Bone_easy((1, get_world_size() - 1), direction_now)
 	# temp_direction = to_position_Bone_easy((0, get_world_size() - 1), temp_direction)
-	temp_direction = to_position_Bone_easy((1, 0), direction_now)
-	temp_direction = to_position_Bone_easy((0, 0), temp_direction)
+	to_position_Bone_easy((1, 0))
+	to_position_Bone_easy((0, 0))
 
 	if snake_length < get_world_size():
-		temp_direction = to_position_Bone_easy((0, snake_length-1), temp_direction)
-		direction = to_position_Bone_easy(position, temp_direction)
-		return direction
+		to_position_Bone_easy((0, snake_length-1))
+		to_position_Bone_easy(position)
 	else:
-		temp_direction = to_position_Bone_easy((0, get_world_size()-1), temp_direction)
-		direction = to_position_Bone_easy(position, temp_direction)
-	return direction
+		to_position_Bone_easy((0, get_world_size()-1))
+		to_position_Bone_easy(position)
 
 def final_move_function():
 	x = get_pos_x()
@@ -235,20 +236,20 @@ target = measure()
 while True:
 	# print(snake_length)
 	if snake_length <= 4:
-		direction = to_position_Bone_easy(target,direction)
+		to_position_Bone_easy(target)
 		# snake_length += 1
 	elif (snake_length > 4) and(snake_length < 1.5*get_world_size()):
-		direction = bend_to_side(target,direction,snake_length)
+		bend_to_side(target,snake_length)
 		# snake_length += 1
-	elif (snake_length >= 1.5* get_world_size()) and (snake_length <get_world_size()*(get_world_size()-3)):
-		direction = to_position_Bone_easy((0,0),direction)
+	elif (snake_length >= 1.5* get_world_size()) and (snake_length <get_world_size()*(get_world_size()-7)):
+		to_position_Bone_easy((0,0))
 
 		loop_num = get_world_size()+(((snake_length-get_world_size())/(get_world_size()-1))//2+1)*2*(get_world_size()-1)
 		for step in range(loop_num):
 			target_move = final_move_function()
-			direction = safe_move(target_move)
+			safe_move(target_move)
 
-		direction = to_position_Bone_easy(target,direction)
+		to_position_Bone_easy(target)
 		# snake_length += 1
 
 	else:
