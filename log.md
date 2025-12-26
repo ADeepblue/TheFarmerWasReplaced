@@ -861,3 +861,132 @@ safe_harvest()
 ```
 
 但是打算优化成6*6的了,所以即将弃用
+
+# 贪吃蛇现在待解决的问题
+绕路的时候,如果一旦路上有遇到苹果,就直接完蛋了,因为会提前吃掉苹果,而不知道苹果在那,导致下一次measure函数信息丢失,衔接不上了,
+
+合适的话,最好是,如果是遇到堵塞,新建寻路算法,break原有的算法循环,snake_length主动加一
+
+
+```python
+loop_num = get_world_size()+(((snake_length-get_world_size())/(get_world_size()-1))//2+1)*2*(get_world_size()-1)
+```
+
+其中这个loop num是指,先判断长度大于边长了,先把最左边的提出来,后面的因为要给下面的回流通留空隙,所以是32-1,然后又有因为最好每次是从上面出来的,所以1到61全部填充为62
+所以是蛇长减去32,出来的数取除31再整除2,但是是要浮点向上取整,所以整除的话得加1,出来的基数再乘以62即可
+
+
+现有另一个format eat需要x对齐,就是x为1的时候从1下手,2的时候也从1下手,单数下手,双数上,但是不希望多判断了,直接写下手的数
+
+```python
+start_x_position_num = ((x+1)//2)*2-1
+```
+
+
+## 内存模型
+```python
+from __builtins__ import *
+from utils import *
+
+# parameter setting
+Cactus_Water_Level = 0.5
+world_size = 32
+
+# set world
+# set_world_size(world_size)
+
+# init
+
+
+def temp_task():
+	while True:
+		print(get_flag())
+		do_a_flip()
+		print(flag)
+
+def get_flag():
+	return flag
+
+
+flag = 0
+to_position((30,31))
+spawn_drone(temp_task)
+move(East)
+while True:
+	print(flag)
+	do_a_flip()
+	flag+=1
+
+```
+上面一份代码,临时无人机一直只会打印0,说明其实主环境都隔离了,等于是,在外部新建了一个主环境变量的副本,然后执行,并不能大环境互通
+
+但是现在又有
+```python
+from __builtins__ import *
+from utils import *
+
+# parameter setting
+Cactus_Water_Level = 0.5
+world_size = 32
+
+# set world
+# set_world_size(world_size)
+
+# init
+
+
+def temp_task():
+	global flag
+	while True:
+		flag +=1
+		handle = spawn_drone(handle_task)
+		print(flag)
+		while True:
+			if has_finished(handle):
+				print(wait_for(handle))
+				break
+
+
+def handle_task():
+	global flag
+	to_position((27, 31))
+	do_a_flip()
+	return flag
+
+
+flag = 0
+to_position((30,31))
+spawn_drone(temp_task)
+move(East)
+while True:
+	print(flag)
+	do_a_flip()
+	do_a_flip()
+	flag+=1
+
+```
+
+
+无人机生成链条如下
+主无人机->次级无人机->第二次级无人机
+其中,第二次级无人机的global继承的次级无人机的内存模型,很显然handle task并不会打印主环境里的flag的值,这里也就以为着
+通过次级无人机生成从无人机是可行的,那么基本就有解了,挑战南瓜刷榜的时候,只要生成一架,然后第二架无人机变成前一架的从属即可
+
+
+## 布置场地
+通过excel模拟,32=1+6+2+6+2+6+2+6+1
+也就是左下的边界坐标分别是(1,1),(1,9),(1,17),(1,25)
+但是我其实希望次级无人机的位置在中央,也就是左下角往上走两格的地方
+
+1 2 3 4 5 6
+↓ →→↓ →→↓ ↑
+↓ ↑ ↓ ↑ ↓ ↑
+→→↑ →→↑ →→↑
+
+路径如上,由于可重复性,这个可以当作扫描的路
+
+所以起始位置如下(1,3),(1,11),(1,19),(1,27)
+
+      (1,1)
+往右坐标(0,0),(1,2),(2,0),(3,2),(4,0)
+实际坐标(1,1),(2,3),(3,1),(4,3),(5,1)
