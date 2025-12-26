@@ -11,23 +11,9 @@ world_size = get_world_size()
 
 # till the field
 
+till_in_parallel()
 
-def row_till_task():
-	to_position((line_index,0))
-	for _ in range(world_size):
-		safe_turn_to_soil()
-		water_the_field(Cactus_Water_Level)
-		move(North)
-
-
-for line_index in range(world_size):
-	if num_drones() < max_drones():
-		spawn_drone(row_till_task)
-	else:
-		while True:
-			if num_drones() < max_drones():
-				spawn_drone(row_till_task)
-				break
+back_zero()
 
 # plant the cactus
 while True:
