@@ -966,6 +966,56 @@ while True:
 
 ```
 
+寄存变量也是如此,直接global一下,在全局放一个变量,函数内赋值一次即可
+```python
+from __builtins__ import *
+from utils import *
+
+# parameter setting
+Cactus_Water_Level = 0.5
+world_size = 32
+
+# set world
+# set_world_size(world_size)
+
+# init
+
+
+def temp_task():
+	global flag
+	global temp_flag
+	temp_flag = 5
+	while True:
+		flag +=1
+		handle = spawn_drone(handle_task)
+		print(flag)
+		while True:
+			if has_finished(handle):
+				print(wait_for(handle))
+				break
+
+
+def handle_task():
+	global temp_flag
+	global flag
+	to_position((27, 31))
+	# do_a_flip()
+	print(temp_flag)
+	return flag
+
+temp_flag = 2
+flag = 0
+to_position((30,31))
+spawn_drone(temp_task)
+move(East)
+while True:
+	print(flag)
+	do_a_flip()
+	do_a_flip()
+	flag+=1
+	
+```
+
 
 无人机生成链条如下
 主无人机->次级无人机->第二次级无人机
