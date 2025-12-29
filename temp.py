@@ -2,154 +2,211 @@ from __builtins__ import *
 from utils import *
 
 # parameter setting
-Cactus_Water_Level = 0.5
-world_size = 32
+Cactus_Water_Level = 0.7
 
-# set world
-# set_world_size(world_size)
+# init up_flag
+up_flag = False
+half_bad_pumpkin_list = []
+# init the position information,clock_wise
+clear()
+
+East_position_list_CCW = [(1,1),(2,3),(3,1),(4,3),(5,1)]
+West_postion_list_CCW = [(2,6),(3,4),(4,6),(5,4),(6,6)]
+South_position_list_CCW = [(1,2),(1,3),(1,4),(1,5),(1,6),(3,2),(3,3),(3,5),(3,6),(5,2),(5,3),(5,5),(5,6)]
+North_position_list_CCW = [(2,1),(2,2),(2,4),(2,5),(4,1),(4,2),(4,4),(4,5),(6,1),(6,2),(6,3),(6,4),(6,5)]
+
+East_position_list_CW = [(1,6),(2,4),(3,6),(4,4),(5,6)]
+West_postion_list_CW = [(2,1),(3,3),(4,1),(5,3),(6,1)]
+South_position_list_CW = [(2,2),(2,3),(2,5),(2,6),(4,2),(4,3),(4,5),(4,6),(6,2),(6,3),(6,4),(6,5),(6,6)]
+North_position_list_CW = [(1,1),(1,2),(1,3),(1,4),(1,5),(3,1),(3,2),(3,4),(3,5),(5,1),(5,2),(5,4),(5,5)]
 
 # init
-clear()
-change_hat(Hats.Dinosaur_Hat)
+def not_false_true(bool_symbol):
+	if bool_symbol:
+		return False
+	elif not bool_symbol:
+		return True
+	else:
+		return None
 
 
-# print(measure())
-
-def safe_move(direct):
-	if move(direct) == False:
-		change_hat(Hats.Gold_Hat)
-
-
-def to_position_Bone(x, y, x_or_not):
-	x_now = get_pos_x()
-	y_now = get_pos_y()
-	if x_now < x:
-		for _ in range(x - x_now):
-			safe_move(East)
-	elif x_now > x:
-		for _ in range(x_now - x):
-			safe_move(West)
-
-	if y_now < y:
-		for _ in range(y - y_now):
-			safe_move(North)
-	elif y_now > y:
-		for _ in range(y_now - y):
-			safe_move(South)
-
-	return not x_or_not
-
-
-def to_position_Bone_easy(position, direction_now):
-	def move_plus(direction,distance):
-		# 前进路上没有障碍
-		flag = 0
-		for step in range(distance):
-			safe_move(direction)
-
+def check_position_in_list(position, position_list):
 	x = position[0]
 	y = position[1]
+	x_mod = x % 8
+	y_mod = y % 8
+	if (x_mod, y_mod) in position_list:
+		return True
+	else:
+		return False
 
-	x_now = get_pos_x()
-	y_now = get_pos_y()
-	# 如果不在同列也不在同行,分类讨论时不考虑x,y都相等,这不可能
-	if (x != x_now) and (y != y_now):
-		if direction_now in [North,South]:
+def check_CCW_direction(position):
+	if check_position_in_list(position,East_position_list_CCW):
+		return East
 
-			if x_now < x:
-				move_plus(East,x - x_now)
+	elif check_position_in_list(position,West_postion_list_CCW):
+		return West
 
-			elif x_now > x:
-				move_plus(West,x_now - x)
+	elif check_position_in_list(position,North_position_list_CCW):
+		return North
 
-			if y_now < y:
-				move_plus(North,y - y_now)
-				return North
-
-			elif y_now > y:
-				move_plus(South,y_now - y)
-				return South
-
-		elif direction_now in [West,East]:
-
-			if y_now < y:
-
-				move_plus(North,y - y_now)
-
-			elif y_now > y:
-				move_plus(South,y_now - y)
-
-			if x_now < x:
-				move_plus(East,x - x_now)
-				return East
-			elif x_now > x:
-				move_plus(West,x_now - x)
-				return West
-
-	# 如果x相同,即在同列
-	elif x == x_now:
-
-		# 如果方向在东西方向上
-		if direction_now in [West,East]:
-			# 上方
-			if y-y_now > 0:
-				move_plus(North,y-y_now)
-				return North
-			# 下方
-			else:
-				move_plus(South,y_now-y)
-				return South
+	elif check_position_in_list(position,South_position_list_CCW):
+		return South
 
 
-		# 如果同向
-		elif ( (((y-y_now) > 0) and (direction_now == North)) or (((y-y_now) < 0) and (direction_now == South)) ):
-			move_plus(direction_now,abs(y-y_now))
-			return direction_now
+def check_CW_direction(position):
+	if check_position_in_list(position,East_position_list_CW):
+		return East
 
+	elif check_position_in_list(position,West_postion_list_CW):
+		return West
 
-		# 如果反向
-		elif ( (((y-y_now) < 0) and (direction_now == North)) or (((y-y_now) > 0) and (direction_now == South)) ):
-			# 如果x不在左边缘
-			if x_now != 0:
-				move(West)
-				direction = to_position_Bone_easy(position,West)
-				return direction
-			else:
-				move(East)
-				direction = to_position_Bone_easy(position,West)
-				return direction
+	elif check_position_in_list(position,North_position_list_CW):
+		return North
 
-	# 如果y相同,即在同行
-	elif y == y_now:
-		# 如果方向在南北方向上
-		if direction_now in [North,South]:
-			# 右边
-			if x-x_now > 0:
-				move_plus(East,y-y_now)
-				return East
-			# 左边
-			else:
-				move_plus(West,y_now-y)
-				return West
+	elif check_position_in_list(position,South_position_list_CW):
+		return South
 
-		# 如果同向
-		if ( (((x-x_now) > 0) and (direction_now == East)) or (((x-x_now) < 0) and (direction_now == West)) ):
-			move_plus(direction_now,abs(x-x_now))
-			return direction_now
+def sub_drone_till_and_plant_task():
+	global up_flag
 
+	for _ in range(18):
+		only_turn_to_soil()
+		plant(Entities.Pumpkin)
+		if get_water() <= Cautious_Water_Level:
+			use_item(Items.Water)
+
+		if up_flag:
+			direction = check_CW_direction(get_position())
+			move(direction)
 		else:
-			# 如果x不在下边缘
-			if y_now != 0:
-				move(South)
-				direction = to_position_Bone_easy(position,West)
-				return direction
-			else:
-				move(North)
-				direction = to_position_Bone_easy(position,West)
-				return direction
+			direction = check_CCW_direction(get_position())
+			move(direction)
+
+def sub_plant_task():
+	global up_flag
+
+	for _ in range(18):
+		plant(Entities.Pumpkin)
+		if get_water() <= Cautious_Water_Level:
+			use_item(Items.Water)
+
+		if up_flag:
+			direction = check_CW_direction(get_position())
+			move(direction)
+		else:
+			direction = check_CCW_direction(get_position())
+			move(direction)
 
 
-target = measure()
+def sub_check_bad_pumpkin():
+	global up_flag
+	bad_pumpkin_list = []
+	for _ in range(18):
+		if not can_harvest():
+			plant(Entities.Pumpkin)
+			bad_pumpkin_list.append(get_position())
+		safe_water_the_field(Cautious_Water_Level)
 
-direction = to_position_Bone_easy(target,North)
+		if up_flag:
+			direction = check_CW_direction(get_position())
+			move(direction)
+		else:
+			direction = check_CCW_direction(get_position())
+			move(direction)
 
+	return bad_pumpkin_list
+
+def sub_kill_bad_pumpkin():
+	global half_bad_pumpkin_list
+	while True:
+		if num_items(Items.Pumpkin) >= 200000000:
+			break
+
+		temp_list = []
+		for position in half_bad_pumpkin_list:
+			to_position(position)
+			if not can_harvest():
+				plant(Entities.Pumpkin)
+				temp_list.append(position)
+
+		half_bad_pumpkin_list = temp_list
+
+		if len(temp_list) == 0:
+			break
+
+
+def main_task():
+	global up_flag
+	global half_bad_pumpkin_list
+	start_postion = (index2*8+1,index1*8+3)
+	to_position(start_postion)
+	# (1,3)
+	# 负责下半部分
+	up_flag = True
+	move(North)
+	spawn_drone(sub_drone_till_and_plant_task)
+
+	move(South)
+	up_flag = False
+	sub_drone_till_and_plant_task()
+
+	while True:
+
+		if num_items(Items.Pumpkin) >= 200000000:
+			break
+		# check bad pumpkin
+		to_position(start_postion)
+		up_flag = True
+		move(North)
+		sub_drone = spawn_drone(sub_check_bad_pumpkin)
+
+		move(South)
+		up_flag = False
+		main_bad_pumpkin_list = sub_check_bad_pumpkin()
+
+		while True:
+			if has_finished(sub_drone):
+				half_bad_pumpkin_list = wait_for(sub_drone)
+				break
+
+
+		sub_drone = spawn_drone(sub_kill_bad_pumpkin)
+
+
+
+		while True:
+			temp_list = []
+			for position in main_bad_pumpkin_list:
+				to_position(position)
+				if not can_harvest():
+					plant(Entities.Pumpkin)
+					temp_list.append(position)
+
+			main_bad_pumpkin_list = temp_list
+
+			if len(temp_list) == 0:
+				break
+
+		while True:
+			if has_finished(sub_drone):
+				wait_for(sub_drone)
+				break
+
+		safe_harvest()
+
+
+def quick_print_position():
+	print(get_position())
+
+to_position((0,2))
+
+
+
+for index1 in range(4):
+	for index2 in range(4):
+		tiny_sleep()
+		if not ((index1==3) and (index2==3)):
+			spawn_drone(main_task)
+
+main_task()
