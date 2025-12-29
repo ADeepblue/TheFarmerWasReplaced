@@ -117,6 +117,9 @@ def to_position_Bone_easy(position):
 				move_plus(West,x_now-x)
 				direction = West
 
+	elif (x == x_now) and (y == y_now):
+		return None
+
 	# 如果x相同,即在同列
 	elif x == x_now:
 
@@ -175,6 +178,8 @@ def to_position_Bone_easy(position):
 			else:
 				move(North)
 				to_position_Bone_easy(position)
+
+
 
 
 def bend_to_side(position,  snake_length):
@@ -310,7 +315,6 @@ while True:
 
 		change_hat(Hats.Brown_Hat)
 		break
-
 
 
 
