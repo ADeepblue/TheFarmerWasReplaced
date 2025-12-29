@@ -2,7 +2,7 @@ from __builtins__ import *
 from utils import *
 
 # parameter setting
-Cactus_Water_Level = 0.7
+Cactus_Water_Level = 1
 
 # init up_flag
 up_flag = False
@@ -128,6 +128,10 @@ def sub_kill_bad_pumpkin():
 			to_position(position)
 			if not can_harvest():
 				plant(Entities.Pumpkin)
+				if len(half_bad_pumpkin_list) ==1 and num_items(Items.Fertilizer) >= 2:
+					# use_item(Items.Weird_Substance)
+					use_item(Items.Fertilizer)
+					# use_item(Items.Weird_Substance)
 				temp_list.append(position)
 
 		half_bad_pumpkin_list = temp_list
@@ -181,6 +185,11 @@ def main_task():
 				to_position(position)
 				if not can_harvest():
 					plant(Entities.Pumpkin)
+					if len(half_bad_pumpkin_list) == 1 and num_items(Items.Fertilizer) >= 2:
+						use_item(Items.Weird_Substance)
+						use_item(Items.Fertilizer)
+						use_item(Items.Weird_Substance)
+
 					temp_list.append(position)
 
 			main_bad_pumpkin_list = temp_list
