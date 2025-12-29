@@ -90,12 +90,23 @@ def safe_turn_to_soil():
 		safe_harvest()
 		till()
 
+def only_turn_to_soil():
+	if get_ground_type() != Grounds.Soil:
+		till()
+
 
 # water the field, single function
 def water_the_field(limit_water_percent):
 	if get_water() <=limit_water_percent:
 		use_item(Items.Water)
 
+
+def safe_water_the_field(limit_water_percent):
+	if get_water() <=limit_water_percent:
+		if num_items(Items.Water) != 0:
+			use_item(Items.Water)
+		else:
+			quick_print("you have no water")
 
 
 # position function
