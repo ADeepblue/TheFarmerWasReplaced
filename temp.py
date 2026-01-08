@@ -54,14 +54,16 @@ def mix_main_task():
 	direction_list = [South,West,North,East]
 	for direction in direction_list:
 		position_list.append(get_position())
-		safe_plant(Entities.Grass)
+		safe_plant(Entities.Carrot)
+		safe_water_the_field(Cactus_Water_Level)
 		move(direction)
 
 	while True:
 		for position in position_list:
+			safe_water_the_field(Cactus_Water_Level)
 			to_position(position)
-			if get_entity_type() != Entities.Grass:
-				safe_plant_grass()
+			if get_entity_type() != Entities.Carrot:
+				safe_plant_Carrot()
 				continue
 			if get_companion() == None:
 				safe_harvest()
@@ -71,6 +73,8 @@ def mix_main_task():
 				safe_plant(companion_plant)
 				to_position(position)
 				loop_safe_harvest()
+				safe_plant_Carrot()
+
 
 for index1 in range(4):
 	for index2 in range(4):
@@ -85,4 +89,5 @@ for index1 in range(4):
 			position = (index1*8+4,index2*8+4)
 			spawn_drone(mix_main_task)
 
+position = (index1*8+4,index2*8+4)
 mix_main_task()
