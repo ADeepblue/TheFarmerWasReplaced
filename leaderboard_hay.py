@@ -2,7 +2,7 @@ from __builtins__ import *
 from utils import *
 
 # parameter setting
-Cactus_Water_Level = 1
+Cactus_Water_Level =0.5
 
 # init up_flag
 up_flag = False
@@ -51,17 +51,20 @@ def mix_main_task():
 	global position
 	to_position(position)
 	position_list = []
-	direction_list = [South,West,North,East]
-	for direction in direction_list:
-		position_list.append(get_position())
+	# direction_list = [South,West,North,East]
+	# direction_list = [South,East]
+	# for direction in direction_list:
+	# 	position_list.append(get_position())
 		# safe_plant(Entities.Grass)
 		# safe_water_the_field(Cactus_Water_Level)
-		move(direction)
+		# move(direction)
+
+	position_list.append(get_position())
 
 	while True:
 		for position in position_list:
 			to_position(position)
-			# safe_water_the_field(Cactus_Water_Level)
+			safe_water_the_field(Cactus_Water_Level)
 			if get_entity_type() != Entities.Grass:
 				safe_plant_grass()
 				continue
