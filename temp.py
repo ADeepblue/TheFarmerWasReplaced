@@ -51,30 +51,53 @@ def mix_main_task():
 	global position
 	to_position(position)
 	position_list = []
-	direction_list = [South,West,North,East]
+	direction_list = [South,East]
 	for direction in direction_list:
 		position_list.append(get_position())
-		safe_plant(Entities.Carrot)
+		# safe_plant(Entities.Grass)
 		safe_water_the_field(Cactus_Water_Level)
 		move(direction)
 
 	while True:
 		for position in position_list:
-			safe_water_the_field(Cactus_Water_Level)
 			to_position(position)
-			if get_entity_type() != Entities.Carrot:
-				safe_plant_Carrot()
+			# safe_water_the_field(Cactus_Water_Level)
+
+			# if num_items(Items.Wood) < 100:
+			# 	safe_plant(Entities.Bush)
+			# 	if get_companion() == None:
+			# 		print(None)
+			# 		safe_harvest()
+			# 	else:
+			# 		companion_plant, position_temp = get_companion()
+			# 		# print(companion_plant)
+			# 		# print(position_temp)
+			# 		to_position(position_temp)
+			# 		safe_plant(companion_plant)
+			# 		to_position(position)
+			# 		loop_safe_harvest()
+			# else:
+
+
+
+
+			if get_entity_type() != Entities.Grass:
+				safe_plant_grass()
 				continue
 			if get_companion() == None:
-				safe_harvest()
+				print(None)
+				harvest()
 			else:
 				companion_plant, position_temp = get_companion()
+				# print(companion_plant)
+				# print(position_temp)
 				to_position(position_temp)
 				safe_plant(companion_plant)
 				to_position(position)
 				loop_safe_harvest()
-				safe_plant_Carrot()
 
+			if num_items(Items.Hay) >= 2000000000:
+				break
 
 for index1 in range(4):
 	for index2 in range(4):
@@ -91,3 +114,9 @@ for index1 in range(4):
 
 position = (index1*8+4,index2*8+4)
 mix_main_task()
+
+# index1 = 0
+# index2 = 0
+#
+# position = (index1*8,index2*8)
+# mix_main_task()
