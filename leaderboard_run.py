@@ -1,4 +1,4 @@
 from __builtins__ import *
-filename = "keyboard_pumpkin"
-speed = 1
-runtime = leaderboard_run(Leaderboards.Pumpkins,filename,speed)
+filename = "leaderboard_hay"
+speed = 50000
+runtime = leaderboard_run(Leaderboards.Hay,filename,speed)
